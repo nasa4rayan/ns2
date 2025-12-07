@@ -276,52 +276,36 @@ if (requestForm) {
             return;
         }
 
+        const originalText = submitBtn.querySelector('.btn-text').textContent;
         submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
 
         const formData = new FormData(requestForm);
-        
-        // Add language to form data
-        formData.append('language', currentLang);
-        
-        // Convert FormData to JSON for Web3Forms
-        const object = {};
-        formData.forEach((value, key) => {
-            if (object[key]) {
-                if (!Array.isArray(object[key])) {
-                    object[key] = [object[key]];
-                }
-                object[key].push(value);
-            } else {
-                object[key] = value;
-            }
-        });
-        
-        const json = JSON.stringify(object);
+        formData.append("access_key", "19c06cd9-091b-47c8-adbc-f713da786419");
+        formData.append("language", currentLang);
 
         try {
-            const response = await fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: json
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
             });
 
-            const result = await response.json();
+            const data = await response.json();
 
-            if (result.success) {
+            if (response.ok) {
                 showSuccessModal();
                 resetForm();
             } else {
-                alert(t.alert_error || 'An error occurred, try again');
+                alert(t.alert_error || "Error: " + data.message);
             }
+
         } catch (error) {
             console.error('Error:', error);
-            alert(t.alert_error || 'An error occurred, try again');
+            alert(t.alert_error || 'Something went wrong. Please try again.');
+        } finally {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
         }
-
-        submitBtn.classList.remove('loading');
     });
 }
 
