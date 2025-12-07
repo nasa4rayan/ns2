@@ -135,39 +135,34 @@ pricingCards.forEach(card => {
 function selectPack(card) {
     const packType = card.dataset.pack;
     const packPrice = card.dataset.price;
+    const t = translations[currentLang];
     
-    // Remove selected class from all cards
-    pricingCards.forEach(c => c.classList.remove('selected'));
+    // Get pack name from translations
+    const packNames = {
+        'starter': t.pack_starter_name || 'Pack Starter',
+        'business': t.pack_business_name || 'Pack Business',
+        'pro': t.pack_pro_name || 'Pack Pro',
+        'custom': t.pack_custom_name || 'Pack Custom'
+    };
     
-    // Add selected class to clicked card
-    card.classList.add('selected');
+    const packName = packNames[packType];
     
-    // Update banner
-    selectedPackBanner.classList.add('has-pack');
-    packNotSelected.style.display = 'none';
-    packSelectedInfo.style.display = 'flex';
+    // Create WhatsApp message based on language
+    let message = '';
+    if (currentLang === 'ar') {
+        message = `السلام عليكم 👋\n\nأنا مهتم بـ ${packName}\nالسعر: ${packPrice}\n\nأريد معلومات أكثر من فضلك.`;
+    } else if (currentLang === 'fr') {
+        message = `Bonjour 👋\n\nJe suis intéressé par ${packName}\nPrix: ${packPrice}\n\nJ'aimerais plus d'informations s'il vous plaît.`;
+    } else {
+        message = `Hello 👋\n\nI'm interested in ${packName}\nPrice: ${packPrice}\n\nI would like more information please.`;
+    }
     
-    // Update pack info
-    selectedPackIcon.innerHTML = `<i class="${packInfo[packType].icon}"></i>`;
-    selectedPackName.textContent = packInfo[packType].name;
-    selectedPackPrice.textContent = packPrice;
+    // Encode message for URL
+    const encodedMessage = encodeURIComponent(message);
     
-    // Update hidden inputs
-    selectedPackInput.value = packInfo[packType].name;
-    selectedPriceInput.value = packPrice;
-    
-    // Show form
-    requestForm.style.display = 'block';
-    
-    // Scroll to form
-    setTimeout(() => {
-        document.getElementById('request-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
-    
-    currentSelectedPack = packType;
-    
-    // Add animation
-    requestForm.style.animation = 'fadeInUp 0.5s ease';
+    // Open WhatsApp with pre-filled message
+    const whatsappURL = `https://wa.me/212644402059?text=${encodedMessage}`;
+    window.open(whatsappURL, '_blank');
 }
 
 // Change pack button

@@ -26,7 +26,7 @@ const translations = {
         pack_starter_feature_4: "Responsive (Mobile/Tablet)",
         pack_starter_feature_5: "WhatsApp Button",
         pack_starter_note: "Perfect to get started and attract customers quickly",
-        select_pack: "Select This Package",
+        select_pack: "Contact via WhatsApp",
         
         // Pack Business
         pack_business_name: "Business Pack",
@@ -217,7 +217,7 @@ const translations = {
         pack_starter_feature_4: "Responsive (Mobile/Tablette)",
         pack_starter_feature_5: "Bouton WhatsApp",
         pack_starter_note: "Parfait pour commencer et recevoir des clients rapidement",
-        select_pack: "Choisir Ce Pack",
+        select_pack: "Contacter via WhatsApp",
         
         // Pack Business
         pack_business_name: "Pack Business",
@@ -408,7 +408,7 @@ const translations = {
         pack_starter_feature_4: "Responsive (موبايل/تابلت)",
         pack_starter_feature_5: "زر WhatsApp",
         pack_starter_note: "Parfait للبداية وتستقبل العملاء بسرعة",
-        select_pack: "اختر هذه الباقة",
+        select_pack: "تواصل عبر واتساب",
         
         // Pack Business
         pack_business_name: "Pack Business",
