@@ -276,13 +276,21 @@ if (requestForm) {
             return;
         }
 
-        const originalText = submitBtn.querySelector('.btn-text').textContent;
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
 
         const formData = new FormData(requestForm);
         formData.append("access_key", "19c06cd9-091b-47c8-adbc-f713da786419");
         formData.append("language", currentLang);
+        
+        // Remove file input from FormData as Web3Forms has limitations with multiple files
+        // Instead, we'll add file info as text
+        formData.delete("attachment");
+        if (uploadedFiles.length > 0) {
+            const fileNames = uploadedFiles.map(f => f.name).join(', ');
+            formData.append("uploaded_files", `${uploadedFiles.length} files: ${fileNames}`);
+            formData.append("files_note", "Client has files to share - will send via WhatsApp");
+        }
 
         try {
             const response = await fetch("https://api.web3forms.com/submit", {
@@ -292,15 +300,16 @@ if (requestForm) {
 
             const data = await response.json();
 
-            if (response.ok) {
+            if (response.ok && data.success) {
                 showSuccessModal();
                 resetForm();
             } else {
-                alert(t.alert_error || "Error: " + data.message);
+                console.error('API Error:', data);
+                alert(t.alert_error || "Error: " + (data.message || "Please try again"));
             }
 
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Network Error:', error);
             alert(t.alert_error || 'Something went wrong. Please try again.');
         } finally {
             submitBtn.classList.remove('loading');
