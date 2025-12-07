@@ -255,15 +255,15 @@ function removeFile(fileName, element) {
 
 // ========== FORM SUBMISSION ==========
 if (requestForm) {
-    requestForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    requestForm.addEventListener('submit', function(e) {
         const t = translations[currentLang];
 
         // Validate pack selection
         if (!currentSelectedPack) {
+            e.preventDefault();
             alert(t.alert_select_pack || 'Please choose a package first');
             document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
-            return;
+            return false;
         }
 
         const clientName = document.getElementById('clientName').value.trim();
@@ -272,49 +272,24 @@ if (requestForm) {
         const businessType = document.getElementById('businessType').value;
 
         if (!clientName || !phone || !businessName || !businessType) {
+            e.preventDefault();
             alert(t.alert_required_fields || 'Please fill in all required fields');
-            return;
+            return false;
         }
 
+        // Add language to hidden input
+        let langInput = document.createElement('input');
+        langInput.type = 'hidden';
+        langInput.name = 'language';
+        langInput.value = currentLang;
+        requestForm.appendChild(langInput);
+
+        // Show loading state
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
 
-        const formData = new FormData(requestForm);
-        formData.append("access_key", "19c06cd9-091b-47c8-adbc-f713da786419");
-        formData.append("language", currentLang);
-        
-        // Remove file input from FormData as Web3Forms has limitations with multiple files
-        // Instead, we'll add file info as text
-        formData.delete("attachment");
-        if (uploadedFiles.length > 0) {
-            const fileNames = uploadedFiles.map(f => f.name).join(', ');
-            formData.append("uploaded_files", `${uploadedFiles.length} files: ${fileNames}`);
-            formData.append("files_note", "Client has files to share - will send via WhatsApp");
-        }
-
-        try {
-            const response = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                showSuccessModal();
-                resetForm();
-            } else {
-                console.error('API Error:', data);
-                alert(t.alert_error || "Error: " + (data.message || "Please try again"));
-            }
-
-        } catch (error) {
-            console.error('Network Error:', error);
-            alert(t.alert_error || 'Something went wrong. Please try again.');
-        } finally {
-            submitBtn.classList.remove('loading');
-            submitBtn.disabled = false;
-        }
+        // Let the native form submission happen
+        return true;
     });
 }
 
